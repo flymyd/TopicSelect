@@ -15,7 +15,8 @@ JRE8 + MySQL5.7（内附5.5版本SQL脚本）
 topicstu为学生端app源码，采用HbuilderX开发。  
 
 ## 部署注意事项
-配置文件路径：/src/main/resources/application.properties
+配置文件路径：/src/main/resources/application.properties  
+默认管理员：admin admin
 
 ## 运行方法
 服务器安装好MySQL5.7并执行建表脚本  
