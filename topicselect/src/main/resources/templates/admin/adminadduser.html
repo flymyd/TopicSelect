@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>管理员控制台</title>
+    <#include "/include/vuetifyheader.html">
+</head>
+<body>
+<div id="app">
+    <v-app id="inspire">
+        <#include "/include/nav-admin.html">
+        <v-content>
+            <v-container fluid fill-height>
+                <v-layout justify-center align-center>
+                    <v-flex text-xs-center>
+                        <h2>新建用户</h2>
+                        <v-form ref="form">
+                            <v-text-field v-model="username" label="用户名" id="username" placeholder="必填"></v-text-field>
+                            <v-text-field v-model="password" label="密码" id="password" placeholder="必填"></v-text-field>
+                            <v-text-field v-model="truename" label="真实姓名" id="truename" placeholder="必填"></v-text-field>
+                            <v-text-field v-model="phone" label="手机号" id="phone" placeholder="必填"></v-text-field>
+                            <v-text-field v-model="email" label="电子邮箱" id="email"></v-text-field>
+                            <v-slider
+                                    v-model="permission"
+                                    :tick-labels="permissions"
+                                    :max="2"
+                                    step="1"
+                                    ticks="always"
+                                    tick-size="2"
+                            ></v-slider>
+                            <v-btn color="success" @click="addUser">
+                                提交
+                            </v-btn>
+                        </v-form>
+                    </v-flex>
+                </v-layout>
+            </v-container>
+        </v-content>
+    </v-app>
+</div>
+<script>
+    let userToken = conf.storage.getItem("userToken");
+    var vue = new Vue({
+        el: '#app',
+        data: () => ({
+            drawer: null,
+            username: null,
+            permissions: ['管理员','教师','学生'],
+            password: null,
+            truename: null,
+            email: null,
+            phone: null,
+            permission: null
+        }),
+        mounted: function () {
+            if (userToken == null || userToken === "") {
+                alert("请先登录！");
+                window.location.href = conf.ur + "/login";
+                return;
+            }
+            if (conf.storage.getItem("userPermission") != "0") {
+                alert("权限不正确，请先登录！");
+                window.location.href = conf.ur + "/login";
+                return;
+            }
+        },
+        props: {
+            source: String
+        },
+        methods: {
+            <#include "/include/nav-jump-admin.html" >
+            addUser() {
+                let purl = conf.ur + "/api/admin/manualAddUserAction";
+                axios({
+                    method: 'post',
+                    url: purl,
+                    headers: {
+                        "x-auth-token": userToken,
+                        "Content-Type": "application/json"
+                    },
+                    data: {
+                        username: this.username,
+                        password: this.password,
+                        truename: this.truename,
+                        email: this.email,
+                        mobile: this.phone,
+                        permission: this.permission
+                    }
+                }).then(function (response) {
+                    if (response.data.code == 0) {
+                        alert("添加成功！");
+                        location.reload();
+                    } else {
+                        alert(response.data.msg);
+                        location.reload();
+                    }
+                }).catch(function (error) {
+                    if (error.response.status === 400) {
+                        alert("你输入的数据格式有误！");
+                        location.reload();
+                    } else if (error.response.status === 401) {
+                        alert("登录态失效，请重新登录！");
+                        window.location.href = conf.ur + "/login";
+                    } else {
+                        alert("内部错误！");
+                        location.reload();
+                    }
+                });
+            }
+        }
+    })
+</script>
+</body>
+</html>

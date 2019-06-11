@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link href="css/bootstrap.min.css" rel="stylesheet" />
+		<link href="css/vuetify.min.css" rel="stylesheet" />
+		<script src="js/jquery-3.3.1.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/conf.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/bootstrap.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/jump.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/finalCheck.js" type="text/javascript" charset="utf-8"></script>
+		<style>
+			ul {
+				font-size: 14px;
+				color: #8f8f94;
+			}
+
+			.mui-btn {
+				padding: 10px;
+			}
+
+			.mui-bar {
+				background-color: #009688;
+			}
+
+			.mainForm {
+				height: 85%;
+				position: absolute;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav" style="padding-right: 15px;">
+			<h1 class="mui-title"><span style="color: #FFFFFF;">选题系统</span></h1>
+		</header>
+		<div class="mui-content" style="background: #FFFFFF;height: 100%;">
+			<div class="mui-content-padded">
+				<ul class="breadcrumb" style="background: #FFFFFF;">
+					<li><a onclick="indexJump()">首页</a></li>
+					<li><a onclick="chooseTopicJump()">选择课题</a></li>
+					<li><a onclick="myTopicJump()">我的选题</a></li>
+					<li class="active">最终确认</li>
+				</ul>
+			</div>
+		</div>
+		<div class="mainForm">
+			<div class="container-fluid">
+				<div class="panel panel-primary">
+					<div class="panel-heading">最终确认</div>
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th id="mytopictitle">课题标题</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td style="width: 15%;">教师姓名</td>
+								<td id="teachername">-</td>
+							</tr>
+							<tr>
+								<td style="width: 15%;">难度</td>
+								<td id="level1">-</td>
+							</tr>
+							<tr>
+								<td style="width: 15%;">实习地点</td>
+								<td id="topicaddress">-</td>
+							</tr>
+							<tr>
+								<td style="width: 15%;">所用技术</td>
+								<td id="technology">-</td>
+							</tr>
+							<tr>
+								<td style="width: 15%;">课题内容</td>
+								<td id="topicdetail" style="word-wrap:break-word;word-break:break-all;">-</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+		<script src="js/mui.min.js"></script>
+		<script src="js/app.js"></script>
+		<script>
+			(function($, doc) {
+				$.init();
+				var settings = app.getSettings();
+				var account = doc.getElementById('account');
+				window.addEventListener('show', function() {
+					var state = app.getState();
+					account.innerText = state.account;
+				}, false);
+				$.plusReady(function() {
+
+				});
+			}(mui, document));
+		</script>
+	</body>
+
+</html>

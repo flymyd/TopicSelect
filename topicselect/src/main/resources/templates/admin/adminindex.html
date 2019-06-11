@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>管理员控制台</title>
+    <#include "/include/vuetifyheader.html">
+</head>
+<body>
+<div id="app">
+    <v-app id="inspire">
+        <#include "/include/nav-admin.html">
+        <v-content>
+            <v-container fluid fill-height>
+                <v-layout justify-center align-center>
+                    <v-flex text-xs-center>
+                        <h2>
+                            <p>1.管理员需要控制系统各时间点的开放时间。</p>
+                            <p>2.管理员需要审核教师申请的课题。</p>
+                            <p>3.管理员能添加、删除用户，但不可以删除自身账户。</p>
+                            <p>4.管理员可以查看选题总情况。</p>
+                        </h2>
+                    </v-flex>
+                </v-layout>
+            </v-container>
+        </v-content>
+    </v-app>
+</div>
+<script>
+    let userToken = conf.storage.getItem("userToken");
+    var vue = new Vue({
+        el: '#app',
+        data: () => ({
+            drawer: null
+        }),
+        mounted: function(){
+            if (userToken==null||userToken===""){
+                alert("请先登录！");
+                window.location.href=conf.ur+"/login";
+                return;
+            }
+            if (conf.storage.getItem("userPermission")!="0"){
+                alert("权限不正确，请先登录！");
+                window.location.href=conf.ur+"/login";
+                return;
+            }
+        },
+        props: {
+            source: String
+        },
+        methods: {
+            <#include "/include/nav-jump-admin.html">
+        }
+    })
+</script>
+</body>
+</html>

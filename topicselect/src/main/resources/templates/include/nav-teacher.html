@@ -1,0 +1,72 @@
+<v-navigation-drawer fixed v-model="drawer" left app>
+    <v-list>
+        <v-list-tile @click="naviTeacherHome()">
+            <v-list-tile-action>
+                <v-icon>home</v-icon>
+            </v-list-tile-action>
+            <v-list-tile-content>
+                <v-list-tile-title>首页</v-list-tile-title>
+            </v-list-tile-content>
+        </v-list-tile>
+        <!-- 课题管理 -->
+        <v-list-group prepend-icon="check_circle" value="true">
+            <v-list-tile slot="activator">
+                <v-list-tile-title>课题管理</v-list-tile-title>
+            </v-list-tile>
+            <v-list-tile @click="naviShowTopic()" dark>
+                <v-list-tile-action>
+                    <v-icon>create</v-icon>
+                </v-list-tile-action>
+                <v-list-tile-content>
+                    <v-list-tile-title>我的课题</v-list-tile-title>
+                </v-list-tile-content>
+            </v-list-tile>
+            <v-list-tile @click="naviApplyTopic()" dark>
+                <v-list-tile-action>
+                    <v-icon>create</v-icon>
+                </v-list-tile-action>
+                <v-list-tile-content>
+                    <v-list-tile-title>申请课题</v-list-tile-title>
+                </v-list-tile-content>
+            </v-list-tile>
+        </v-list-group>
+        <!-- 选题管理 -->
+        <v-list-group prepend-icon="group" value="true">
+            <v-list-tile slot="activator">
+                <v-list-tile-title>选题管理</v-list-tile-title>
+            </v-list-tile>
+            <v-list-tile @click="naviFirstRoundOverView()" dark>
+                <v-list-tile-action>
+                    <v-icon>create</v-icon>
+                </v-list-tile-action>
+                <v-list-tile-content>
+                    <v-list-tile-title>选择学生</v-list-tile-title>
+                </v-list-tile-content>
+            </v-list-tile>
+            <v-list-tile @click="naviSelectedStudents()" dark>
+                <v-list-tile-action>
+                    <v-icon>create</v-icon>
+                </v-list-tile-action>
+                <v-list-tile-content>
+                    <v-list-tile-title>结果一览</v-list-tile-title>
+                </v-list-tile-content>
+            </v-list-tile>
+        </v-list-group>
+    </v-list>
+</v-navigation-drawer>
+<v-toolbar color="teal" dark fixed app>
+    <!-- 把LOGO移动到右边，取消下一行注释即可 -->
+    <!-- <v-spacer></v-spacer> -->
+    <v-toolbar-title>选题系统</v-toolbar-title>
+    <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+    <v-spacer></v-spacer>
+    <v-btn icon @click="naviChangeInfo()">
+        <v-icon>person</v-icon>
+    </v-btn>
+    <v-btn icon @click="naviLogout()">
+        <v-icon>exit_to_app</v-icon>
+    </v-btn>
+</v-toolbar>
+<v-footer color="teal" app>
+    <span class="white--text">&emsp;&copy; 2018-2019 天津大学仁爱学院计算机系</span>
+</v-footer>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>学生控制台</title>
+    <#include "/include/vuetifyheader.html">
+</head>
+<body>
+<div id="app">
+    <v-app id="inspire">
+        <#include "/include/nav-stu.html">
+        <v-content>
+            <v-container fluid fill-height>
+                <v-layout justify-center align-center>
+                    <v-flex text-xs-center>
+                        <h2>
+                            <p>1.学生可以选择三个课题，当课题未被老师选中时可以修改和删除自己的课题，当课题已被老师选择后不可进行修改。</p>
+                            <p>2.学生可以查看自己的选课情况。</p>
+                            <p>3.学生只能在一轮选课和二轮选课时间内选课。</p>
+                            <p>4.学生必须完善自己的个人信息。</p>
+                        </h2>
+                    </v-flex>
+                </v-layout>
+            </v-container>
+        </v-content>
+    </v-app>
+</div>
+<script>
+    let userToken = conf.storage.getItem("userToken");
+    var vue = new Vue({
+        el: '#app',
+        data: () => ({
+            drawer: null
+        }),
+        mounted: function () {
+            if (userToken == null || userToken === "") {
+                alert("请先登录！");
+                window.location.href = conf.ur + "/login";
+                return;
+            }
+            if (conf.storage.getItem("userPermission") != "2") {
+                alert("权限不正确，请先登录！");
+                window.location.href = conf.ur + "/login";
+                return;
+            }
+        },
+        props: {
+            source: String
+        },
+        methods: {
+            <#include "/include/nav-jump-stu.html">
+        }
+    })
+</script>
+</body>
+</html>

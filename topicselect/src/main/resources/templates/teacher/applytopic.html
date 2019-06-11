@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>教师控制台</title>
+    <#include "/include/vuetifyheader.html">
+</head>
+<body>
+<div id="app">
+    <v-app id="inspire">
+        <#include "/include/nav-teacher.html">
+        <v-content>
+            <v-container fluid fill-height>
+                <v-layout justify-center align-center>
+                    <v-flex text-xs-center>
+                        <h2>申请课题</h2>
+                        <v-form ref="form">
+                            <v-text-field v-model="topictitle" label="课题标题" id="topictitle"></v-text-field>
+                            <v-slider
+                                    v-model="level1"
+                                    :tick-labels="difficulty"
+                                    :max="2"
+                                    step="1"
+                                    ticks="always"
+                                    tick-size="2"
+                            ></v-slider>
+                            <v-text-field v-model="sumnum" label="课题人数" id="sumnum"></v-text-field>
+                            <v-text-field v-model="availablenum" label="可选人数" id="availablenum"></v-text-field>
+                            <v-text-field v-model="technology" label="实现技术" id="technology" placeholder="无具体要求填'不限'或留空"></v-text-field>
+                            <v-text-field v-model="address" label="实习地点" id="address" placeholder="无具体要求填'不限'或留空"></v-text-field>
+                            <v-textarea
+                                    name="topicdetail"
+                                    label="课题内容"
+                                    auto-grow
+                                    id="topicdetail"
+                                    v-model="topicdetail"
+                            ></v-textarea>
+                            <v-btn color="success" @click="applyTopic">
+                                提交
+                            </v-btn>
+                        </v-form>
+                    </v-flex>
+                </v-layout>
+            </v-container>
+        </v-content>
+    </v-app>
+</div>
+<script>
+    let userToken = conf.storage.getItem("userToken");
+    var vue = new Vue({
+        el: '#app',
+        data: () => ({
+            drawer: null,
+            level1: null,
+            difficulty: ['简单','一般','困难'],
+            topictitle: null,
+            sumnum: null,
+            availablenum: null,
+            technology: null,
+            address: null,
+            topicdetail: null
+        }),
+        mounted: function () {
+            if (userToken == null || userToken === "") {
+                alert("请先登录！");
+                window.location.href = conf.ur + "/login";
+                return;
+            }
+            if (conf.storage.getItem("userPermission") != "1") {
+                alert("权限不正确，请先登录！");
+                window.location.href = conf.ur + "/login";
+                return;
+            }
+        },
+        props: {
+            source: String
+        },
+        methods: {
+            <#include "/include/nav-jump-teacher.html" >
+            applyTopic() {
+                let purl = conf.ur + "/api/teacher/applyTopicAction";
+                axios({
+                    method: 'post',
+                    url: purl,
+                    headers: {
+                        "x-auth-token": userToken,
+                        "Content-Type": "application/json"
+                    },
+                    data: {
+                        topictitle: this.topictitle,
+                        level1: this.level1,
+                        sumnum: this.sumnum,
+                        availablenum: this.availablenum,
+                        technology: this.technology,
+                        address: this.address,
+                        topicdetail: this.topicdetail
+                    }
+                }).then(function (response) {
+                    if (response.data.code == 0) {
+                        alert("申请成功！");
+                        location.reload();
+                    } else {
+                        alert(response.data.msg);
+                        location.reload();
+                    }
+                }).catch(function (error) {
+                    if (error.response.status === 400){
+                        alert("你输入的数据格式有误！");
+                        location.reload();
+                    } else if (error.response.status === 401){
+                        alert("登录态失效，请重新登录！");
+                        window.location.href=conf.ur+"/login";
+                    } else {
+                        alert("内部错误！");
+                        location.reload();
+                    }
+                });
+            }
+        }
+    })
+</script>
+</body>
+</html>

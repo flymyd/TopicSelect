@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>教师控制台</title>
+    <#include "/include/vuetifyheader.html">
+</head>
+<body>
+<div id="app">
+    <v-app id="inspire">
+        <#include "/include/nav-teacher.html">
+        <v-content>
+            <v-container fluid fill-height>
+                <v-layout justify-center align-center>
+                    <v-flex text-xs-center>
+                        <h2>
+                            <p>1.教师申请课题需要提交到管理员端进行审核，教师可以取消申请课题，管理员审核之后的结果会反馈到教师端。</p>
+                            <p>2.教师可在查看我的课题这个功能中查看管理员已审核通过的课题，并可以对选中的课题进行修改和删除。</p>
+                            <p>3.教师在查看我的的学生这个功能中查看已选择我的课题的学生，并确定选择课题对应的学生，而在查看已确定的学生这只能查看已被选中的学生和对应的课题。</p>
+                            <p>4.教师可查看自己的基本信息，并且能够修改自己的登录密码。</p>
+                        </h2>
+                    </v-flex>
+                </v-layout>
+            </v-container>
+        </v-content>
+    </v-app>
+</div>
+<script>
+    let userToken = conf.storage.getItem("userToken");
+    var vue = new Vue({
+        el: '#app',
+        data: () => ({
+            drawer: null
+        }),
+        mounted: function () {
+            if (userToken == null || userToken === "") {
+                alert("请先登录！");
+                window.location.href = conf.ur + "/login";
+                return;
+            }
+            if (conf.storage.getItem("userPermission") != "1") {
+                alert("权限不正确，请先登录！");
+                window.location.href = conf.ur + "/login";
+                return;
+            }
+        },
+        props: {
+            source: String
+        },
+        methods: {
+            <#include "/include/nav-jump-teacher.html">
+        }
+    })
+</script>
+</body>
+</html>

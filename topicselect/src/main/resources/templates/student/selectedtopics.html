@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>学生控制台</title>
+    <#include "/include/vuetifyheader.html">
+</head>
+<body>
+<div id="app">
+    <v-app id="inspire">
+        <#include "/include/nav-stu.html">
+        <v-content>
+            <v-container fluid>
+                <v-layout justify-center align-center>
+                    <v-flex text-xs-center>
+                        <v-card>
+                            <v-card-title>已选课题
+                                <v-spacer></v-spacer>
+                                <v-text-field v-model="search" append-icon="search" label="搜索课题名称" single-line
+                                              hide-details></v-text-field>
+                            </v-card-title>
+                            <v-data-table :headers="headers" :items="desserts" :search="search">
+                                <template slot="items" slot-scope="props">
+                                    <td>{{ props.item.topicid }}</td>
+                                    <td>{{ props.item.truename }}</td>
+                                    <td>{{ props.item.topictitle }}</td>
+                                    <td>{{ props.item.sumnum }}</td>
+                                    <td>{{ props.item.availablenum }}</td>
+                                    <td>{{ props.item.level1 }}</td>
+                                    <td>{{ props.item.address }}</td>
+                                    <td>{{ props.item.technology }}</td>
+                                    <td>{{ props.item.selectednum }}</td>
+                                    <td>{{ props.item.topicdetail }}</td>
+                                </template>
+                                <v-alert slot="no-results" :value="true" color="error" icon="warning">
+                                    你所搜索的 "{{ search }}" 没有结果。
+                                </v-alert>
+                            </v-data-table>
+                        </v-card>
+                    </v-flex>
+                </v-layout>
+            </v-container>
+        </v-content>
+    </v-app>
+</div>
+<script>
+    let userToken = conf.storage.getItem("userToken");
+    var vue = new Vue({
+        el: '#app',
+        data: () => ({
+            drawer: null,
+            search: '',
+            headers: [
+                {
+                    text: '课题ID',
+                    align: 'center',
+                    sortable: false,
+                    value: 'topicid'
+                },
+                {
+                    text: '教师名称',
+                    align: 'center',
+                    sortable: false,
+                    value: 'truename'
+                },
+                {
+                    text: '课题名称',
+                    align: 'center',
+                    sortable: false,
+                    value: 'topictitle'
+                },
+                {
+                    text: '课题人数',
+                    align: 'center',
+                    value: 'sumnum'
+                },
+                {
+                    text: '可选人数',
+                    align: 'center',
+                    value: 'availablenum'
+                },
+                {
+                    text: '难易度',
+                    align: 'center',
+                    value: 'level1'
+                },
+                {
+                    text: '实习地点',
+                    align: 'center',
+                    sortable: false,
+                    value: 'address'
+                },
+                {
+                    text: '实现技术',
+                    align: 'center',
+                    sortable: false,
+                    value: 'technology'
+                },
+                {
+                    text: '已选人数',
+                    align: 'center',
+                    sortable: false,
+                    value: 'selectednum'
+                },
+                {
+                    text: '课题内容',
+                    align: 'center',
+                    sortable: false,
+                    value: 'topicdetail'
+                }
+            ],
+            desserts: []
+        }),
+        mounted: function () {
+            let that = this;
+            if (userToken == null || userToken === "") {
+                alert("请先登录！");
+                window.location.href = conf.ur + "/login";
+                return;
+            }
+            if (conf.storage.getItem("userPermission") != "2") {
+                alert("权限不正确，请先登录！");
+                window.location.href = conf.ur + "/login";
+                return;
+            }
+            let purl0 = conf.ur + "/api/student/listChoosedTopics";
+            axios({
+                method: 'post',
+                url: purl0,
+                headers: {
+                    "x-auth-token": userToken,
+                    "Content-Type": "application/json"
+                }
+            }).then(function (response) {
+                if (response.data.code == 0) {
+                    let dt = response.data.data;
+                    for (let i = 0; i < dt.length; i++) {
+                        let tempdata = {
+                            topicid: dt[i].id,
+                            truename: dt[i].truename,
+                            topictitle: dt[i].topictitle,
+                            sumnum: dt[i].sumnum,
+                            availablenum: dt[i].availablenum,
+                            level1: dt[i].level1,
+                            address: dt[i].address,
+                            technology: dt[i].technology,
+                            selectednum: dt[i].selectednum,
+                            topicdetail: dt[i].topicdetail
+                        };
+                        that.desserts.push(tempdata);
+                    }
+                } else {
+                    alert(response.data.msg);
+                    window.location.href = conf.ur + "/student";
+                }
+            }).catch(function (error) {
+                if (error.response.status === 400) {
+                    alert("你的请求有误！");
+                    window.location.href = conf.ur + "/student";
+                } else if (error.response.status === 401) {
+                    alert("登录态失效，请重新登录！");
+                    window.location.href = conf.ur + "/login";
+                } else {
+                    alert("内部错误！");
+                    window.location.href = conf.ur + "/";
+                }
+            });
+        },
+        props: {
+            source: String
+        },
+        methods: {
+            <#include "/include/nav-jump-stu.html">
+        }
+    })
+</script>
+</body>
+</html>

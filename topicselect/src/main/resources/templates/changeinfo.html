@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>修改个人信息</title>
+    <#include "/include/vuetifyheader.html">
+</head>
+<body>
+<div id="app">
+    <v-app id="inspire">
+        <#include "/include/nav-public.html">
+        <v-content>
+            <v-container fluid fill-height>
+                <v-layout justify-center align-center>
+                    <v-flex text-xs-center>
+                        <h2>修改个人信息</h2>
+                        <v-form ref="form" v-model="valid" lazy-validation>
+                            <v-text-field v-model="phonenumber" id="phonenumber" :rules="phoneRules" :counter="11" label="手机号"
+                                          required></v-text-field>
+                            <v-text-field v-model="email" id="email" :rules="emailRules" label="E-mail"></v-text-field>
+                            <v-checkbox v-model="checkbox" :rules="[v => !!v || '请先确认！']"
+                                        label="确定修改"
+                                        required></v-checkbox>
+                            <v-btn :disabled="!valid" color="success" @click="validate">
+                                提交
+                            </v-btn>
+                            <v-btn color="error" @click="reset">
+                                清除
+                            </v-btn>
+                        </v-form>
+                    </v-flex>
+                </v-layout>
+            </v-container>
+        </v-content>
+    </v-app>
+</div>
+<script>
+    let userToken = conf.storage.getItem("userToken");
+    var vue = new Vue({
+        el: '#app',
+        data: () => ({
+            valid: true,
+            drawer: null,
+            phonenumber: '',
+            phoneRules: [
+                v => !!v || '手机号是必需的',
+                v => v.length == 11 || '必须是一个有效的大陆手机号'
+            ],
+            email: '',
+            emailRules: [
+                v => /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/.test(v) || '必须是一个有效的E-mail地址'
+            ],
+            select: null,
+            checkbox: false
+        }),
+        mounted: function(){
+            if (userToken==null||userToken===""){
+                alert("请先登录！");
+                window.location.href=conf.ur+"/login";
+                return;
+            }
+            this.getUserInfo();
+        },
+        methods: {
+            <#include "/include/nav-jump-public.html">
+            getUserInfo(){
+                let purl = conf.ur + "/api/user/showUserInfo";
+                let that = this;
+                axios({
+                    method: 'post',
+                    url: purl,
+                    headers: {
+                        "x-auth-token": userToken,
+                        "Content-Type": "application/json"
+                    },
+                    data: {}
+                }).then(function (response) {
+                    if (response.data.code==0){
+                        let dt=response.data.data;
+                        that.phonenumber=dt.mobile;
+                        that.email=dt.email;
+                    }else {
+                        alert(response.data.msg);
+                        window.location.href = conf.ur + "/login";
+                    }
+                }).catch(function (error) {
+                    alert("查询失败！");
+                    window.location.href = conf.ur + "/login";
+                });
+            },
+            validate() {
+                if (this.$refs.form.validate()) {
+                    this.snackbar = true;
+                    let purl = conf.ur + "/api/user/changeInfoAction";
+                    axios({
+                        method: 'post',
+                        url: purl,
+                        headers: {
+                            "x-auth-token": userToken,
+                            "Content-Type": "application/json"
+                        },
+                        data: {
+                            mobile: this.phonenumber,
+                            email: this.email
+                        }
+                    }).then(function (response) {
+                        if (response.data.code==0){
+                            alert("修改成功！")
+                        }else {
+                            alert("修改失败！")
+                        }
+                    }).catch(function (error) {
+                            alert("修改失败！")
+                        });
+                }
+            },
+            reset() {
+                this.$refs.form.reset();
+                this.$refs.form.resetValidation();
+            }
+        }
+    })
+</script>
+</body>
+</html>

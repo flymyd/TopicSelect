@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>教师控制台</title>
+    <#include "/include/vuetifyheader.html">
+</head>
+<body>
+<div id="app">
+    <v-app id="inspire">
+        <#include "/include/nav-teacher.html">
+        <v-content>
+            <v-container fluid>
+                <v-layout justify-center align-center>
+                    <v-flex text-xs-center>
+                        <v-card>
+                            <v-card-title>已选择的学生
+                                <v-spacer></v-spacer>
+                                <v-text-field v-model="search" append-icon="search" label="搜索课题名称" single-line
+                                              hide-details></v-text-field>
+                            </v-card-title>
+                            <v-data-table :headers="headers" :items="desserts" :search="search">
+                                <template slot="items" slot-scope="props">
+                                    <td>{{ props.item.topicid }}</td>
+                                    <td>{{ props.item.stuid }}</td>
+                                    <td>{{ props.item.topictitle }}</td>
+                                    <td>{{ props.item.stutruename }}</td>
+                                    <td>{{ props.item.stuusername }}</td>
+                                    <td>{{ props.item.createtime }}</td>
+                                    <td>{{ props.item.topicdetail }}</td>
+                                    <td class="justify-center layout px-0">
+                                        <v-icon small @click="deleteItem(props.item)">
+                                            delete
+                                        </v-icon>
+                                    </td>
+                                </template>
+                                <v-alert slot="no-results" :value="true" color="error" icon="warning">
+                                    你所搜索的 "{{ search }}" 没有结果。
+                                </v-alert>
+                            </v-data-table>
+                        </v-card>
+                    </v-flex>
+                </v-layout>
+            </v-container>
+        </v-content>
+    </v-app>
+</div>
+<script>
+    let userToken = conf.storage.getItem("userToken");
+    var vue = new Vue({
+        el: '#app',
+        data: () => ({
+            drawer: null,
+            search: '',
+            headers: [
+                {
+                    text: '课题ID',
+                    align: 'center',
+                    sortable: false,
+                    value: 'topicid'
+                },
+                {
+                    text: '学生ID',
+                    align: 'center',
+                    sortable: false,
+                    value: 'stuid'
+                },
+                {
+                    text: '课题名称',
+                    align: 'center',
+                    sortable: false,
+                    value: 'topictitle'
+                },
+                {
+                    text: '学生姓名',
+                    align: 'center',
+                    value: 'stutruename'
+                },
+                {
+                    text: '学生账号',
+                    align: 'center',
+                    value: 'stuusername'
+                },
+                {
+                    text: '申请时间',
+                    align: 'center',
+                    value: 'createtime'
+                },
+                {
+                    text: '课题内容',
+                    align: 'center',
+                    sortable: false,
+                    value: 'topicdetail'
+                },
+                {
+                    text: '操作',
+                    align: 'center',
+                    sortable: false,
+                    value: 'topicid'
+                }
+            ],
+            desserts: []
+        }),
+        mounted: function () {
+            let that = this;
+            if (userToken == null || userToken === "") {
+                alert("请先登录！");
+                window.location.href = conf.ur + "/login";
+                return;
+            }
+            if (conf.storage.getItem("userPermission") != "1") {
+                alert("权限不正确，请先登录！");
+                window.location.href = conf.ur + "/login";
+                return;
+            }
+            let purl0 = conf.ur + "/api/teacher/selectedStudentsShow";
+            axios({
+                method: 'post',
+                url: purl0,
+                headers: {
+                    "x-auth-token": userToken,
+                    "Content-Type": "application/json"
+                }
+            }).then(function (response) {
+                if (response.data.code == 0) {
+                    let dt = response.data.data;
+                    for (let i = 0; i < dt.length; i++) {
+                        let tempdata = {
+                            topicid: dt[i].topicid,
+                            stuid: dt[i].stuid,
+                            topictitle: dt[i].topictitle,
+                            stutruename: dt[i].stutruename,
+                            stuusername: dt[i].stuusername,
+                            createtime: dt[i].createtime,
+                            topicdetail: dt[i].topicdetail
+                        };
+                        that.desserts.push(tempdata);
+                    }
+                } else {
+                    alert(response.data.msg);
+                    window.location.href = conf.ur + "/teacher";
+                }
+            }).catch(function (error) {
+                if (error.response.status === 400) {
+                    alert("你的请求有误！");
+                    window.location.href = conf.ur + "/teacher";
+                } else if (error.response.status === 401) {
+                    alert("登录态失效，请重新登录！");
+                    window.location.href = conf.ur + "/login";
+                } else {
+                    alert("内部错误！");
+                    window.location.href = conf.ur + "/";
+                }
+            });
+        },
+        props: {
+            source: String
+        },
+        methods: {
+            <#include "/include/nav-jump-teacher.html" >
+            deleteItem(item) {
+                let that = this;
+                const index = this.desserts.indexOf(item);
+                confirm('确定将此学生打回重选吗？本条课题将会允许被其它学生选择。该操作十分危险！') && confirm('请再次确认是否要将此学生打回重选！本条课题将会允许被其它学生选择。该操作十分危险！') && this.deleteMyTopic(item, index);
+            },
+            deleteMyTopic(topicitem, itemindex) {
+                let that = this;
+                let purl = conf.ur + "/api/teacher/rejectStudentFirstRound";
+                axios({
+                    method: 'post',
+                    url: purl,
+                    headers: {
+                        "x-auth-token": userToken,
+                        "Content-Type": "application/json"
+                    },
+                    data: {
+                        topicId: topicitem.topicid,
+                        studentId: topicitem.stuid
+                    }
+                }).then(function (response) {
+                    if (response.data.code == 0) {
+                        alert("退选成功！");
+                        that.desserts.splice(itemindex, 1);
+                    } else {
+                        alert(response.data.msg);
+                        location.reload();
+                    }
+                }).catch(function (error) {
+                    if (error.response.status === 400) {
+                        alert("你的请求有误！");
+                        location.reload();
+                    } else if (error.response.status === 401) {
+                        alert("登录态失效，请重新登录！");
+                        window.location.href = conf.ur + "/login";
+                    } else {
+                        alert("内部错误！")
+                    }
+                });
+            }
+        }
+    })
+</script>
+</body>
+</html>

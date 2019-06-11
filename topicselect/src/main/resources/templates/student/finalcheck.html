@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>学生控制台</title>
+    <#include "/include/vuetifyheader.html">
+</head>
+<body>
+<div id="app">
+    <v-app id="inspire">
+        <#include "/include/nav-stu.html">
+        <v-content>
+            <v-container fluid fill-height>
+                <v-layout justify-center align-center>
+                    <v-flex text-xs-center>
+                        <h1>{{ topictitle }}</h1>
+                        <br/><br/>
+                        <h2>
+                            <p>教师名称：{{ teachername }}</p>
+                            <p>课题难度：{{ level1 }}</p>
+                            <p>实习地点：{{ topicaddress }}</p>
+                            <p>所用技术：{{ technology }}</p>
+                            <p>课题内容：{{ topicdetail }}</p>
+                        </h2>
+                    </v-flex>
+                </v-layout>
+            </v-container>
+        </v-content>
+    </v-app>
+</div>
+<script>
+    let userToken = conf.storage.getItem("userToken");
+    var vue = new Vue({
+        el: '#app',
+        data: () => ({
+            drawer: null,
+            topictitle: null,
+            teachername: null,
+            level1: null,
+            topicaddress: null,
+            technology: null,
+            topicdetail: null
+        }),
+        mounted: function () {
+            if (userToken == null || userToken === "") {
+                alert("请先登录！");
+                window.location.href = conf.ur + "/login";
+                return;
+            }
+            if (conf.storage.getItem("userPermission") != "2") {
+                alert("权限不正确，请先登录！");
+                window.location.href = conf.ur + "/login";
+                return;
+            }
+            this.getFinalCheck();
+        },
+        props: {
+            source: String
+        },
+        methods: {
+            <#include "/include/nav-jump-stu.html">
+            getFinalCheck() {
+                let purl = conf.ur + "/api/student/stuFinalCheck";
+                let that = this;
+                axios({
+                    method: 'post',
+                    url: purl,
+                    headers: {
+                        "x-auth-token": userToken,
+                        "Content-Type": "application/json"
+                    }
+                }).then(function (response) {
+                    if (response.data.code == 0) {
+                        let dt = response.data.data;
+                        that.topictitle=dt.topictitle;
+                        that.teachername=dt.teachername;
+                        that.level1=dt.level1;
+                        that.topicaddress=dt.topicaddress;
+                        that.technology=dt.technology;
+                        that.topicdetail=dt.topicdetail;
+                    } else {
+                        alert(response.data.msg);
+                        window.location.href = conf.ur + "/student";
+                    }
+                }).catch(function (error) {
+                    if (error.response.status === 400) {
+                        alert("你的请求有误！");
+                        window.location.href = conf.ur + "/student";
+                    } else if (error.response.status === 401) {
+                        alert("登录态失效，请重新登录！");
+                        window.location.href = conf.ur + "/login";
+                    } else {
+                        alert("内部错误！");
+                        window.location.href = conf.ur + "/";
+                    }
+                });
+            }
+        }
+    })
+</script>
+</body>
+</html>

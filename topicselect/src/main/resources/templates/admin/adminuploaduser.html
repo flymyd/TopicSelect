@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>管理员控制台</title>
+    <#include "/include/vuetifyheader.html">
+</head>
+<body>
+<div id="app">
+    <v-app id="inspire">
+        <#include "/include/nav-admin.html">
+        <v-content>
+            <v-container fluid fill-height>
+                <v-layout justify-center align-center>
+                    <v-flex text-xs-center>
+                        <form method="post" enctype="multipart/form-data" action="/api/admin/uploadUserExcel" role="form">
+                            <div class="form-group" style="text-align: center">
+                                <div id="uploadhint">
+                                    <h2>请上传后缀名为.xls或.xlsx的Excel表格文件。</h2>
+                                    <h2>文件不能大于10MB，请点击下方按钮下载样例模板。</h2>
+                                    <br/>
+                                </div>
+                                <h3><input type="file" name="file" /></h3>
+                                <br/>
+                            </div>
+                            <v-btn color="primary" @click="navidownloadExampleUser()">下载模板(仅PC端)</v-btn>
+                            <v-btn color="success" type="submit">提交</v-btn>
+                        </form>
+                    </v-flex>
+                </v-layout>
+            </v-container>
+        </v-content>
+    </v-app>
+</div>
+<script>
+    let userToken = conf.storage.getItem("userToken");
+    var vue = new Vue({
+        el: '#app',
+        data: () => ({
+            drawer: null
+        }),
+        mounted: function () {
+            if (userToken == null || userToken === "") {
+                alert("请先登录！");
+                window.location.href = conf.ur + "/login";
+                return;
+            }
+            if (conf.storage.getItem("userPermission") != "0") {
+                alert("权限不正确，请先登录！");
+                window.location.href = conf.ur + "/login";
+                return;
+            }
+        },
+        props: {
+            source: String
+        },
+        methods: {
+            <#include "/include/nav-jump-admin.html">
+        }
+    })
+</script>
+</body>
+</html>

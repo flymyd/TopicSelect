@@ -1,0 +1,148 @@
+<v-navigation-drawer fixed v-model="drawer" left app>
+    <v-list>
+        <v-list-tile @click="naviAdminHome()">
+            <v-list-tile-action>
+                <v-icon>home</v-icon>
+            </v-list-tile-action>
+            <v-list-tile-content>
+                <v-list-tile-title>首页</v-list-tile-title>
+            </v-list-tile-content>
+        </v-list-tile>
+        <!-- 系统开放时间 -->
+        <v-list-group prepend-icon="event" value="true">
+            <v-list-tile slot="activator">
+                <v-list-tile-title>系统开放时间管理</v-list-tile-title>
+            </v-list-tile>
+            <v-list-tile @click="naviSysOpenTimeShow()" dark>
+                <v-list-tile-action>
+                    <v-icon>insert_drive_file</v-icon>
+                </v-list-tile-action>
+                <v-list-tile-content>
+                    <v-list-tile-title>系统开放时间查询</v-list-tile-title>
+                </v-list-tile-content>
+            </v-list-tile>
+            <v-list-tile @click="naviSysOpenTimeModify()" dark>
+                <v-list-tile-action>
+                    <v-icon>create</v-icon>
+                </v-list-tile-action>
+                <v-list-tile-content>
+                    <v-list-tile-title>系统开放时间修改</v-list-tile-title>
+                </v-list-tile-content>
+            </v-list-tile>
+        </v-list-group>
+        <!-- 审核课题 -->
+        <v-list-group prepend-icon="spellcheck" value="true">
+            <v-list-tile slot="activator">
+                <v-list-tile-title>审核课题</v-list-tile-title>
+            </v-list-tile>
+            <v-list-tile @click="naviToauditTopics()" dark>
+                <v-list-tile-action>
+                    <v-icon>insert_drive_file</v-icon>
+                </v-list-tile-action>
+                <v-list-tile-content>
+                    <v-list-tile-title>待审核课题</v-list-tile-title>
+                </v-list-tile-content>
+            </v-list-tile>
+                <v-list-tile @click="naviAuditedTopics()" dark>
+                <v-list-tile-action>
+                    <v-icon>create</v-icon>
+                </v-list-tile-action>
+                <v-list-tile-content>
+                    <v-list-tile-title>已审核课题</v-list-tile-title>
+                </v-list-tile-content>
+            </v-list-tile>
+        </v-list-group>
+        <!-- 选题情况 -->
+        <v-list-group prepend-icon="check_circle" value="true">
+            <v-list-tile slot="activator">
+                <v-list-tile-title>选题情况</v-list-tile-title>
+            </v-list-tile>
+            <v-list-tile @click="naviselectTopicResults()" dark>
+                <v-list-tile-action>
+                    <v-icon>insert_drive_file</v-icon>
+                </v-list-tile-action>
+                <v-list-tile-content>
+                    <v-list-tile-title>选题结果</v-list-tile-title>
+                </v-list-tile-content>
+            </v-list-tile>
+            <v-list-tile @click="naviunChoseStudents()" dark>
+                <v-list-tile-action>
+                    <v-icon>create</v-icon>
+                </v-list-tile-action>
+                <v-list-tile-content>
+                    <v-list-tile-title>未被选择的学生</v-list-tile-title>
+                </v-list-tile-content>
+            </v-list-tile>
+            <v-list-tile @click="naviunChoseTopics()" dark>
+                <v-list-tile-action>
+                    <v-icon>create</v-icon>
+                </v-list-tile-action>
+                <v-list-tile-content>
+                    <v-list-tile-title>未被选择的课题</v-list-tile-title>
+                </v-list-tile-content>
+            </v-list-tile>
+        </v-list-group>
+        <!-- 用户管理 -->
+        <v-list-group prepend-icon="group" value="true">
+            <v-list-tile slot="activator">
+                <v-list-tile-title>用户管理</v-list-tile-title>
+            </v-list-tile>
+            <v-list-tile @click="naviBatchCreateUsers()" dark>
+                <v-list-tile-action>
+                    <v-icon>insert_drive_file</v-icon>
+                </v-list-tile-action>
+                <v-list-tile-content>
+                    <v-list-tile-title>批量添加用户</v-list-tile-title>
+                </v-list-tile-content>
+            </v-list-tile>
+            <v-list-tile @click="naviCreateUser()" dark>
+                <v-list-tile-action>
+                    <v-icon>create</v-icon>
+                </v-list-tile-action>
+                <v-list-tile-content>
+                    <v-list-tile-title>手动添加用户</v-list-tile-title>
+                </v-list-tile-content>
+            </v-list-tile>
+            <v-list-tile @click="naviManageUsers()" dark>
+                <v-list-tile-action>
+                    <v-icon>create</v-icon>
+                </v-list-tile-action>
+                <v-list-tile-content>
+                    <v-list-tile-title>用户管理</v-list-tile-title>
+                </v-list-tile-content>
+            </v-list-tile>
+        </v-list-group>
+        <!-- 数据导出 -->
+        <v-list-group prepend-icon="insert_drive_file" value="true">
+            <v-list-tile slot="activator">
+                <v-list-tile-title>数据导出</v-list-tile-title>
+            </v-list-tile>
+            <v-list-tile @click="naviexportTopicResult()" dark>
+                <v-list-tile-action>
+                    <v-icon>create</v-icon>
+                </v-list-tile-action>
+                <v-list-tile-content>
+                    <v-list-tile-title>导出选题结果</v-list-tile-title>
+                </v-list-tile-content>
+            </v-list-tile>
+        </v-list-group>
+
+
+    </v-list>
+</v-navigation-drawer>
+<v-toolbar color="teal" dark fixed app>
+    <!-- 把LOGO移动到右边，取消下一行注释即可 -->
+    <!-- <v-spacer></v-spacer> -->
+    <v-toolbar-title>选题系统</v-toolbar-title>
+    <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+    <v-spacer></v-spacer>
+    <v-btn icon @click="naviChangeInfo()">
+        <v-icon>person</v-icon>
+    </v-btn>
+    <v-btn icon @click="naviLogout()">
+        <v-icon>exit_to_app</v-icon>
+    </v-btn>
+</v-toolbar>
+<v-footer color="teal" app>
+    <span class="white--text">&emsp;&copy; 2018-2019 天津大学仁爱学院计算机系</span>
+</v-footer>
